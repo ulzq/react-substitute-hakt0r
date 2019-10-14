@@ -1,5 +1,6 @@
 import React from "react";
 import RegisterStudent from "./components/registerStudent";
+import EditStudent from "./components/editStudent";
 import Bascket from "./components/bascket";
 import "./App.css";
 
@@ -7,11 +8,25 @@ export default class App extends React.Component {
   state = {
     students: [],
     bascket : [],
+    currentStudent: null
   };
 
   //add student into state.students array
   addStudent = (stu) => {
     this.state.students.push(stu);
+    this.forceUpdate();
+  };
+
+  // open the student editor
+  editStudent = (student) => {
+    this.setState({currentStudent: student});
+  };
+
+  // open the student editor
+  changeStudent = (old,student) => {
+    this.state.currentStudent = null;
+    let idx = this.state.students.indexOf(old);
+    this.state.students[idx] = student;
     this.forceUpdate();
   };
 
@@ -40,7 +55,11 @@ export default class App extends React.Component {
     this.state.bascket.splice(this.state.bascket.indexOf(item),1);
     this.forceUpdate();
   }
-
+  registerOrEdit = ()=>{
+    if ( this.state.currentStudent ){
+      return <EditStudent changeStudent={this.changeStudent} original={this.state.currentStudent} />; }
+      return <RegisterStudent addStudent={this.addStudent} />;
+  }
   render() {
     return (
       <div className="border border-info mb-5 container">
@@ -70,6 +89,16 @@ export default class App extends React.Component {
                   <td>
                     <button
                       type="button"
+                      className="btn btn-info"
+                      value={student.ID}
+                      onClick={this.editStudent.bind(this,student)}
+                    >
+                      edit
+                    </button>
+                  </td>
+                  <td>
+                    <button
+                      type="button"
                       className="btn btn-danger"
                       value={student.ID}
                       onClick={this.deleteStudent}
@@ -84,7 +113,7 @@ export default class App extends React.Component {
           <Bascket bascketContent={this.state.bascket} deleteProduct={this.deleteProduct} />
         </div>
         <div className="d-flex justify-self-start">
-          <RegisterStudent addStudent={this.addStudent} />
+          { this.registerOrEdit() }
         </div>
       </div>
     );
