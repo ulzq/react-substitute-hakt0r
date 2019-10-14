@@ -1,0 +1,9 @@
+.heading {
+  color: yellow;
+}
+.cateableItem:after {
+  content: ", ";
+}
+.cateableItem:last-child:after {
+  content: unset
+}
